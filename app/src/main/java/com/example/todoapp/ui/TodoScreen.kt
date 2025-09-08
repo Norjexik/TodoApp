@@ -19,13 +19,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.ui.component.TodoItemCard
 import com.example.todoapp.viewmodel.TodoViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todoapp.data.TodoRepository
 
 @Composable
-fun TodoScreen(viewModel: TodoViewModel = viewModel())
-{
+fun TodoScreen(repository: TodoRepository) {
+    val viewModel: TodoViewModel = viewModel(factory = object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return TodoViewModel(repository) as T
+        }
+    })
     var title by remember { mutableStateOf("") }
     val todos by viewModel.todos
 

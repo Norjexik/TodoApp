@@ -41,8 +41,9 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.viewmodel.compose)
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
 
+    implementation(libs.androidx.viewmodel.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
