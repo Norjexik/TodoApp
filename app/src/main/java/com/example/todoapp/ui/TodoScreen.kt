@@ -11,8 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,21 +23,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todoapp.data.ThemeRepository
+import com.example.todoapp.data.TodoRepository
 import com.example.todoapp.ui.component.TodoItemCard
 import com.example.todoapp.viewmodel.TodoViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.todoapp.data.TodoRepository
 
 @Composable
-fun TodoScreen(repository: TodoRepository) {
+fun TodoScreen(
+    repository: TodoRepository,
+    themeRepository: ThemeRepository
+) {
     val viewModel: TodoViewModel = viewModel(factory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return TodoViewModel(repository) as T
+            return TodoViewModel(repository, themeRepository) as T
         }
     })
     var title by remember { mutableStateOf("") }
     val todos by viewModel.todos
+    val isDarkTheme = viewModel.isDarkTheme
 
     Column(
         modifier = Modifier
@@ -64,6 +71,17 @@ fun TodoScreen(repository: TodoRepository) {
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
+
+        Row {
+            Text(
+                text = if(isDarkTheme)"Тёмная тема" else "Светлая тема",
+                modifier = Modifier.weight(1f)
+            )
+            Switch(
+                checked = isDarkTheme,
+                onCheckedChange = { viewModel.setDarkTheme(it)}
+            )
+        }
 
         LazyColumn {
             items(
