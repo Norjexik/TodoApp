@@ -40,6 +40,9 @@ android {
 }
 
 dependencies {
+
+    implementation("androidx.navigation:navigation-compose:2.9.4")
+
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.viewmodel.compose)
     implementation(libs.androidx.core.ktx)

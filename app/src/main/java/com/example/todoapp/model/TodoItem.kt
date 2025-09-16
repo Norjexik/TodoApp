@@ -5,8 +5,4 @@ data class TodoItem (
     val title: String,
     val isDone: Boolean = false
 )
-/*id - чтобы отличать задачи
-  title - текст задачи
-  isDone - выполнено или нет
-*/
 
