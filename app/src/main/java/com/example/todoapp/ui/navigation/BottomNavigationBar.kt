@@ -1,8 +1,5 @@
 package com.example.todoapp.ui.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -16,25 +13,18 @@ import androidx.navigation.NavController
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    val items = listOf(Screen.Todo, Screen.About)
+    val items = listOf(BottomBarScreen.Todo, BottomBarScreen.About)
     var selectedItemIndex by remember { mutableIntStateOf(0) }
 
     BottomAppBar {
-        items.forEachIndexed { index, screen ->
+        items.forEachIndexed { index, item ->
             NavigationBarItem(
-                icon = {
-                    when (screen) {
-                        Screen.Todo ->
-                            Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Задачи")
-                        Screen.About ->
-                            Icon(Icons.Default.Info,contentDescription = "О приложении")
-                    }
-                },
-                label = { Text(screen.route.replaceFirstChar { it.uppercase() })},
+                icon = { Icon(item.icon, contentDescription = item.label) },
+                label = { Text(item.route.replaceFirstChar { it.uppercase() }) },
                 selected = selectedItemIndex == index,
                 onClick = {
                     selectedItemIndex = index
-                    navController.navigate(screen.route) {
+                    navController.navigate(item.route) {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }

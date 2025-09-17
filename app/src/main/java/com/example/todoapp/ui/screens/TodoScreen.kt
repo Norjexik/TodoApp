@@ -23,25 +23,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.todoapp.data.ThemeRepository
 import com.example.todoapp.data.TodoRepository
 import com.example.todoapp.ui.component.TodoItemCard
+import com.example.todoapp.ui.navigation.Screen
 import com.example.todoapp.viewmodel.TodoViewModel
 
 @Composable
 fun TodoScreen(
-    repository: TodoRepository,
-    themeRepository: ThemeRepository
+    todoViewModel: TodoViewModel,
+    navController: NavController
 ) {
-    val viewModel: TodoViewModel = viewModel(factory = object : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return TodoViewModel(repository, themeRepository) as T
-        }
-    })
     var title by remember { mutableStateOf("") }
-    val todos by viewModel.todos
-    val isDarkTheme = viewModel.isDarkTheme
+    val todos by todoViewModel.todos
+    val isDarkTheme = todoViewModel.isDarkTheme
 
     Column(
         modifier = Modifier
@@ -60,7 +56,7 @@ fun TodoScreen(
             Button(
                 onClick = {
                     if (title.isNotBlank()) {
-                        viewModel.addTodo(title)
+                        todoViewModel.addTodo(title)
                         title = ""
                     }
                 },
@@ -78,7 +74,7 @@ fun TodoScreen(
             )
             Switch(
                 checked = isDarkTheme,
-                onCheckedChange = { viewModel.setDarkTheme(it)}
+                onCheckedChange = { todoViewModel.setDarkTheme(it)}
             )
         }
 
@@ -89,8 +85,9 @@ fun TodoScreen(
             ) { item ->
                 TodoItemCard(
                     item = item,
-                    onToggle = { viewModel.toggleDone(it) },
-                    onRemove = { viewModel.remove(it) }
+                    onToggle = { todoViewModel.toggleDone(it) },
+                    onRemove = { todoViewModel.remove(it) },
+                    onEdit = { navController.navigate(Screen.Edit(it.id).route)}
                 )
             }
         }
