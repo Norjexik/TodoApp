@@ -67,4 +67,10 @@ class TodoViewModel(
             repository.saveTodos(updateList)
         }
     }
+    fun updateTodos(newList: List<TodoItem>) {
+        todos.value = newList
+        viewModelScope.launch {
+            repository.saveTodos(newList)
+        }
+    }
 }
