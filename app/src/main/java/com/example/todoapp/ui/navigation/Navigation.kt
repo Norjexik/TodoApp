@@ -31,7 +31,8 @@ fun AppNavigation(
         composable(Screen.Todo.route) {
             TodoScreen(
                 todoViewModel = todoViewModel,
-                navController = navController
+                navController = navController,
+                viewModel = todoViewModel
             )
         }
         composable(Screen.About.route) {

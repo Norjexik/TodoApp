@@ -20,12 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.todoapp.data.ThemeRepository
-import com.example.todoapp.data.TodoRepository
 import com.example.todoapp.ui.component.TodoItemCard
 import com.example.todoapp.ui.navigation.Screen
 import com.example.todoapp.viewmodel.TodoViewModel
@@ -33,6 +28,7 @@ import com.example.todoapp.viewmodel.TodoViewModel
 @Composable
 fun TodoScreen(
     todoViewModel: TodoViewModel,
+    viewModel: TodoViewModel,
     navController: NavController
 ) {
     var title by remember { mutableStateOf("") }
@@ -69,25 +65,24 @@ fun TodoScreen(
 
         Row {
             Text(
-                text = if(isDarkTheme)"Тёмная тема" else "Светлая тема",
+                text = if (isDarkTheme) "Тёмная тема" else "Светлая тема",
                 modifier = Modifier.weight(1f)
             )
             Switch(
                 checked = isDarkTheme,
-                onCheckedChange = { todoViewModel.setDarkTheme(it)}
+                onCheckedChange = { todoViewModel.setDarkTheme(it) }
             )
         }
 
-        LazyColumn {
-            items(
-                items = todos,
-                key = { todo -> todo.id }
-            ) { item ->
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
+            items(todos, key = { it.id }) { item ->
                 TodoItemCard(
                     item = item,
-                    onToggle = { todoViewModel.toggleDone(it) },
-                    onRemove = { todoViewModel.remove(it) },
-                    onEdit = { navController.navigate(Screen.Edit(it.id).route)}
+                    onToggle = { viewModel.toggleDone(it) },
+                    onRemove = { viewModel.remove(it) },
+                    onEdit = { navController.navigate(Screen.Edit(it.id).route) }
                 )
             }
         }
