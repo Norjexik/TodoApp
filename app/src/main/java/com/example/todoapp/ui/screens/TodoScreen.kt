@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.todoapp.ui.component.SwipeToDelete
 import com.example.todoapp.ui.component.TodoItemCard
 import com.example.todoapp.ui.navigation.Screen
 import com.example.todoapp.viewmodel.TodoViewModel
@@ -78,12 +79,16 @@ fun TodoScreen(
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             items(todos, key = { it.id }) { item ->
-                TodoItemCard(
+                SwipeToDelete(
                     item = item,
-                    onToggle = { viewModel.toggleDone(it) },
-                    onRemove = { viewModel.remove(it) },
-                    onEdit = { navController.navigate(Screen.Edit(it.id).route) }
-                )
+                    onRemove = { viewModel.remove(it) }
+                ) {
+                    TodoItemCard(
+                        item = item,
+                        onToggle = { viewModel.toggleDone(it) },
+                        onEdit = { navController.navigate(Screen.Edit(it.id).route) }
+                    )
+                }
             }
         }
     }

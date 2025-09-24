@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -27,7 +26,6 @@ import com.example.todoapp.model.TodoItem
 fun TodoItemCard(
     item: TodoItem,
     onToggle: (Int) -> Unit,
-    onRemove: (Int) -> Unit,
     onEdit: (TodoItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -66,9 +64,6 @@ fun TodoItemCard(
             }
             IconButton(onClick = { onEdit(item) }) {
                 Icon(Icons.Default.Edit, contentDescription = "Редактировать")
-            }
-            IconButton(onClick = { onRemove(item.id) }) {
-                Icon(Icons.Default.Delete, contentDescription = "Удалить")
             }
         }
     }
