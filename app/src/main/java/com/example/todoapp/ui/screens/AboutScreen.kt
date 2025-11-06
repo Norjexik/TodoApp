@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,7 +26,6 @@ fun AboutScreen() {
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "О приложении",
@@ -35,10 +33,10 @@ fun AboutScreen() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 32.dp)
         )
-        AboutItem("Название","Todo App")
-        AboutItem("Версия","1.0.0")
-        AboutItem("Автор","Norjex")
-        AboutItem("Год","2025")
+        AboutItem("Название", "Todo App")
+        AboutItem("Версия", "1.0.0")
+        AboutItem("Автор", "Norjex")
+        AboutItem("Год", "2025")
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -48,12 +46,15 @@ fun AboutScreen() {
                     "- Jetpack Compose\n" +
                     "- ViewModel\n" +
                     "- DataStore\n" +
-                    "- Navigation\n",
+                    "- Navigation\n" +
+                    "- Room\n" +
+                    "- Hilt\n",
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             modifier = Modifier.padding(horizontal = 16.dp),
             textAlign = TextAlign.Left
         )
     }
+
 }
 
 @Composable
@@ -63,7 +64,7 @@ private fun AboutItem(label: String, value: String) {
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Text(
             text = label,
             fontWeight = FontWeight.Medium,
@@ -78,7 +79,7 @@ private fun AboutItem(label: String, value: String) {
 
 @Preview
 @Composable
-fun PreviewScreen(){
+fun PreviewScreen() {
     TodoAppTheme(darkTheme = false) {
         AboutScreen()
     }
