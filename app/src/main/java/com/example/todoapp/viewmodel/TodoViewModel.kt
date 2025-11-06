@@ -1,76 +1,52 @@
 package com.example.todoapp.viewmodel
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data.ThemeRepository
-import com.example.todoapp.data.TodoRepository
+import com.example.todoapp.data.repository.TodoRepository
 import com.example.todoapp.model.TodoItem
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class TodoViewModel(
-    private val repository: TodoRepository,
-    private val themeRepository: ThemeRepository
+@HiltViewModel
+class TodoViewModel @Inject constructor(
+    private val repository: TodoRepository
 ) : ViewModel() {
-    var todos = mutableStateOf<List<TodoItem>>(emptyList())
-        private set
-    private val _isDarkTheme = mutableStateOf(false)
-    val isDarkTheme: Boolean by _isDarkTheme
-
-    init {
-        viewModelScope.launch {
-            themeRepository.isDarkTheme.collect { dark ->
-                _isDarkTheme.value = dark
-            }
-        }
-
-        viewModelScope.launch {
-            repository.todos.collect { loadedTodos ->
-                todos.value = loadedTodos
-            }
-        }
-    }
-
-    fun setDarkTheme(enabled: Boolean) {
-        _isDarkTheme.value = enabled
-        viewModelScope.launch {
-            themeRepository.setDarkTheme(enabled)
-        }
-    }
-
+    val todos: StateFlow<List<TodoItem>> = repository.getAllTodos().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList()
+    )
     fun addTodo(title: String) {
-        val newId = if (todos.value.isEmpty()) 0 else todos.value.maxOf { it.id } + 1
-        val newTodo = TodoItem(id = newId, title = title, isDone = false)
-        val updateList = todos.value + newTodo
-        todos.value = updateList
         viewModelScope.launch {
-            repository.saveTodos(updateList)
+            repository.insert(TodoItem(title = title, isDone = false))
         }
     }
 
-    fun toggleDone(id: Int) {
-        val updateList = todos.value.map { item ->
-            if (item.id == id) item.copy(isDone = !item.isDone) else item
-        }
-        todos.value = updateList
+    fun toggleDone(id: Long) {
+        val item = todos.value.find { it.id == id } ?: return
         viewModelScope.launch {
-            repository.saveTodos(updateList)
+            repository.update(item.copy(isDone = !item.isDone))
         }
     }
 
-    fun remove(id: Int) {
-        val updateList = todos.value.filter { it.id != id }
-        todos.value = updateList
+    fun remove(id: Long) {
+        val item = todos.value.find { it.id == id } ?: return
         viewModelScope.launch {
-            repository.saveTodos(updateList)
+            repository.delete(item)
         }
     }
-    fun updateTodos(newList: List<TodoItem>) {
-        todos.value = newList
+
+    fun updateTodoItem(item: TodoItem) {
         viewModelScope.launch {
-            repository.saveTodos(newList)
+            repository.update(item)
         }
     }
 }

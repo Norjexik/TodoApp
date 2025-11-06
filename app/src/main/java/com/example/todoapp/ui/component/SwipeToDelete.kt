@@ -33,13 +33,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun SwipeToDelete(
     item: TodoItem,
-    onRemove: (Int) -> Unit,
+    onRemove: (Long) -> Unit,
     content: @Composable () -> Unit
 ) {
     var isDismissing by remember { mutableStateOf(false) }
 
     if (isDismissing) {
-        LaunchedEffect(Unit) {
+        LaunchedEffect(item.id) {
             delay(300)
             onRemove(item.id)
         }
@@ -49,15 +49,13 @@ fun SwipeToDelete(
         visible = !isDismissing,
         exit = slideOutHorizontally(tween(300)) + fadeOut(tween(300))
     ) {
-        val state = rememberSwipeToDismissBoxState(
-            confirmValueChange = { targetValue ->
-                if (targetValue != SwipeToDismissBoxValue.Settled) {
-                    isDismissing = true
-                }
-                true
-            },
-            positionalThreshold = { it * 0.5f },
-        )
+        val state = rememberSwipeToDismissBoxState()
+
+        LaunchedEffect(state.currentValue) {
+            if (state.currentValue != SwipeToDismissBoxValue.Settled && !isDismissing) {
+                isDismissing = true
+            }
+        }
 
         SwipeToDismissBox(
             state = state,
@@ -80,7 +78,7 @@ fun SwipeToDelete(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = null,
+                            contentDescription = "Удалить задачу",
                             tint = MaterialTheme.colorScheme.onError,
                             modifier = Modifier.padding(end = 16.dp)
                         )

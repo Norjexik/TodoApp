@@ -1,4 +1,4 @@
-package com.example.todoapp.data
+package com.example.todoapp.data.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -12,17 +12,16 @@ import kotlinx.coroutines.flow.map
 val Context.themeDataStore: DataStore<Preferences> by preferencesDataStore(name = "theme_settings")
 
 class ThemeRepository(context: Context) {
-    private val dataSore = context.themeDataStore
+    private val dataStore = context.themeDataStore
+    private val darkThemeKey = booleanPreferencesKey("dark_theme")
+    val isDarkTheme: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[darkThemeKey] ?: false
+        }
 
-    private val KEY_THEME = booleanPreferencesKey("dark_theme")
-
-    val isDarkTheme: Flow<Boolean> = dataSore.data.map { preferences ->
-        preferences[KEY_THEME] ?: false
-    }
-
-    suspend fun setDarkTheme(enabled: Boolean){
-        dataSore.edit { preferences ->
-            preferences[KEY_THEME] = enabled
+    suspend fun setDarkTheme(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[darkThemeKey] = enabled
         }
     }
 }

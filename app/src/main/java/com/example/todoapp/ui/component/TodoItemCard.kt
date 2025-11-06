@@ -25,7 +25,7 @@ import com.example.todoapp.model.TodoItem
 @Composable
 fun TodoItemCard(
     item: TodoItem,
-    onToggle: (Int) -> Unit,
+    onToggle: (Long) -> Unit,
     onEdit: (TodoItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,17 +38,17 @@ fun TodoItemCard(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = modifier.padding(12.dp)
+            modifier = Modifier.padding(12.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier.weight(1f)
+                modifier = Modifier.weight(1f)
             ) {
                 Checkbox(
                     checked = item.isDone,
                     onCheckedChange = { onToggle(item.id) }
                 )
-                Spacer(modifier.padding(8.dp))
+                Spacer(modifier = Modifier.padding(8.dp))
                 Text(
                     text = item.title,
                     style = if (item.isDone) {
