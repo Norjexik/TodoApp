@@ -7,34 +7,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.todoapp.data.ThemeRepository
-import com.example.todoapp.data.TodoRepository
 import com.example.todoapp.ui.navigation.AppNavigation
 import com.example.todoapp.ui.navigation.BottomNavigationBar
 import com.example.todoapp.ui.theme.TodoAppTheme
+import com.example.todoapp.viewmodel.ThemeViewModel
 import com.example.todoapp.viewmodel.TodoViewModel
 
 @Composable
-fun TodoApp(
-    repository: TodoRepository,
-    themeRepository: ThemeRepository,
-) {
-    val isDarkTheme by themeRepository.isDarkTheme.collectAsState(false)
+fun TodoApp() {
+    val todoViewModel: TodoViewModel = hiltViewModel()
+    val themeViewModel: ThemeViewModel = hiltViewModel()
+
+    val navController = rememberNavController()
+    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState(true)
+
     TodoAppTheme(darkTheme = isDarkTheme) {
-        val navController = rememberNavController()
-        val todoViewModel: TodoViewModel = viewModel(factory = object : ViewModelProvider.Factory{
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return TodoViewModel(
-                    repository = repository,
-                    themeRepository = themeRepository
-                ) as T
-            }
-        })
         Scaffold(
             bottomBar = {
                 BottomNavigationBar(navController)
@@ -43,7 +32,8 @@ fun TodoApp(
             Box(modifier = Modifier.padding(innerPadding)) {
                 AppNavigation(
                     navController = navController,
-                    todoViewModel = todoViewModel
+                    themeViewModel = themeViewModel,
+                    todoViewModel = todoViewModel,
                 )
             }
         }
